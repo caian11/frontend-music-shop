@@ -26,7 +26,7 @@ defineProps({
         class="navbar-brand font-weight-bolder ms-lg-0 ms-3"
         :class="darkMode ? 'text-black' : 'text-white'"
         to="/"
-        >Argon Dashboard 2</router-link
+        >Music shop</router-link
       >
       <button
         class="shadow-none navbar-toggler ms-2"
@@ -93,10 +93,10 @@ defineProps({
         <ul class="navbar-nav d-lg-block d-none">
           <li class="nav-item">
             <a
-              href="https://www.creative-tim.com/product/vue-argon-dashboard"
+              href=""
               class="btn btn-sm mb-0 me-1"
               :class="isBtn"
-              >Free download</a
+              >Entrar</a
             >
           </li>
         </ul>
