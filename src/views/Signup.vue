@@ -121,7 +121,7 @@ const register = async () => {
               <div v-if="successMessage" class="alert alert-success">
                 {{ successMessage }}
               </div>
-              <!-- Exibe a mensagem de erro se existir -->
+              <!-- Exibe a mensagem de erro seexistir -->
               <div v-if="errorMessage" class="alert alert-danger">
                 {{ errorMessage }}
               </div>
