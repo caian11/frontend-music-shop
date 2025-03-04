@@ -1,4 +1,4 @@
-name: frontend
+name: frontend-music-shop
 region: us-east-1
 frontend:
   # Specifies the path of your code.
@@ -8,7 +8,7 @@ frontend:
   publish: dist
   # Scripts will run in the specified `path` folder.
   scripts:
-    # The command to build your frontend project. This is custom to your project.
+    # The command to build your frontend-music-shop project. This is custom to your project.
     # It must to populate the specified `publish` folder with a `index.html` file.
     deploy:
       - npm install --legacy-peer-deps
