@@ -168,7 +168,7 @@ const register = async () => {
                 </div>
                 <p class="text-sm mt-3 mb-0">
                   Já tem uma conta?
-                  <a href="javascript:;" class="text-dark font-weight-bolder">
+                  <a href="../../signin" class="text-dark font-weight-bolder" >
                     Entrar
                   </a>
                 </p>

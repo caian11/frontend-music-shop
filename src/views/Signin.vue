@@ -45,8 +45,8 @@ onBeforeUnmount(() => {
             >
               <div class="card card-plain">
                 <div class="pb-0 card-header text-start">
-                  <h4 class="font-weight-bolder">Sign In</h4>
-                  <p class="mb-0">Enter your email and password to sign in</p>
+                  <h4 class="font-weight-bolder">Login</h4>
+                  <p class="mb-0">Entre com seu email e senha</p>
                 </div>
                 <div class="card-body">
                   <form role="form">
@@ -54,7 +54,7 @@ onBeforeUnmount(() => {
                       <argon-input
                         id="email"
                         type="email"
-                        placeholder="Email"
+                        placeholder="E-mail"
                         name="email"
                         size="lg"
                       />
@@ -63,13 +63,13 @@ onBeforeUnmount(() => {
                       <argon-input
                         id="password"
                         type="password"
-                        placeholder="Password"
-                        name="password"
+                        placeholder="Senha"
+                        name="senha"
                         size="lg"
                       />
                     </div>
                     <argon-switch id="rememberMe" name="remember-me"
-                      >Remember me</argon-switch
+                      >Mantenha-me conectado</argon-switch
                     >
 
                     <div class="text-center">
@@ -79,18 +79,18 @@ onBeforeUnmount(() => {
                         color="success"
                         fullWidth
                         size="lg"
-                        >Sign in</argon-button
+                        >Entrar</argon-button
                       >
                     </div>
                   </form>
                 </div>
                 <div class="px-1 pt-0 text-center card-footer px-lg-2">
                   <p class="mx-auto mb-4 text-sm">
-                    Don't have an account?
+                    Você não tem uma conta?
                     <a
                       href="javascript:;"
                       class="text-success text-gradient font-weight-bold"
-                      >Sign up</a
+                      >Cadastrar</a
                     >
                   </p>
                 </div>
@@ -102,7 +102,7 @@ onBeforeUnmount(() => {
               <div
                 class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
                 style="
-                  background-image: url(&quot;https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg&quot;);
+                  background-image: url(https://images.unsplash.com/photo-1627407661127-fe96129c06dc?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
                   background-size: cover;
                 "
               >
@@ -110,11 +110,10 @@ onBeforeUnmount(() => {
                 <h4
                   class="mt-5 text-white font-weight-bolder position-relative"
                 >
-                  "Attention is the new currency"
+                  "Sua paixão em cada nota"
                 </h4>
                 <p class="text-white position-relative">
-                  The more effortless the writing looks, the more effort the
-                  writer actually put into the process.
+                  Sugere que os instrumentos são o meio para expressar a paixão pela música, enfatizando a conexão emocional com o som.
                 </p>
               </div>
             </div>
