@@ -45,7 +45,7 @@ const register = async () => {
     console.log('Usuário cadastrado com sucesso:', response.data);
     successMessage.value = 'Usuário cadastrado com sucesso!';
     errorMessage.value = '';
-    // Opcional: limpar os campos após o cadastro
+    // Opcional limpar os campos após o cadastro
     name.value = '';
     email.value = '';
     password.value = '';
