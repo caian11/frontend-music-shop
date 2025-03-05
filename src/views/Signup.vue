@@ -51,7 +51,7 @@ const register = async () => {
     password.value = '';
   } catch (error) {
     if (error.response) {
-      // Verifica se o erro é de validação (status 400)
+      //Verifica se o erro é de validação (status 400)
       if (error.response.status === 400) {
         //Supondo que o back-end retorne um objeto com erros detalhados, por exemplo:
         //{ errors: [{ field: 'email', message: 'Email já existe' }, { field: 'senha', message: 'A senha deve conter...' }] }
