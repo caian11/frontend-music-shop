@@ -18,16 +18,19 @@ const routes = [
     path: "/dashboard-default",
     name: "Dashboard",
     component: Dashboard,
+    meta: { requiresAuth: true },
   },
   {
     path: "/tables",
     name: "Tables",
     component: Tables,
+    meta: { requiresAuth: true },
   },
   {
     path: "/billing",
     name: "Billing",
     component: Billing,
+    meta: { requiresAuth: true },
   },
   {
     path: "/virtual-reality",
@@ -43,6 +46,7 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: Profile,
+    meta: { requiresAuth: true },
   },
   {
     path: "/signin",
@@ -56,10 +60,33 @@ const routes = [
   },
 ];
 
+function isTokenValid(token) {
+  if (!token) return false;
+  try {
+    const payload = JSON.parse(window.atob(token.split('.')[1]));
+    return payload.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+}
+
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(),
   routes,
   linkActiveClass: "active",
+});
+
+router.beforeEach((to, from, next) => {
+  const rawToken = localStorage.getItem('token');
+  const loggedIn = isTokenValid(rawToken);
+  const precisaAuth = to.matched.some(r => r.meta.requiresAuth);
+
+  if (precisaAuth && !loggedIn) {
+    localStorage.removeItem('token');
+    return next({ path: '/signin' });
+  }
+
+  next();
 });
 
 export default router;
