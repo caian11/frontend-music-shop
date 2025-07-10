@@ -240,34 +240,34 @@ onBeforeUnmount(() => {
               <div class="d-flex align-items-center">
                 <p class="mb-0">Edit Profile</p>
                 <argon-button color="success" size="sm" class="ms-auto"
-                  >Settings</argon-button
+                  >Configurações</argon-button
                 >
               </div>
             </div>
             <div class="card-body">
-              <p class="text-uppercase text-sm">User Information</p>
+              <p class="text-uppercase text-sm">Informações de usuário</p>
               <div class="row">
                 <div class="col-md-6">
                   <label for="example-text-input" class="form-control-label"
-                    >Username</label
+                    >Nome de usuário</label
                   >
                   <argon-input type="text" value="lucky.jesse" />
                 </div>
                 <div class="col-md-6">
                   <label for="example-text-input" class="form-control-label"
-                    >Email address</label
+                    >E-mail</label
                   >
                   <argon-input type="email" value="jesse@example.com" />
                 </div>
                 <div class="col-md-6">
                   <label for="example-text-input" class="form-control-label"
-                    >First name</label
+                    >Nome</label
                   >
                   <input class="form-control" type="text" value="Jesse" />
                 </div>
                 <div class="col-md-6">
                   <label for="example-text-input" class="form-control-label"
-                    >Last name</label
+                    >Sobrenome</label
                   >
                   <argon-input type="text" value="Lucky" />
                 </div>

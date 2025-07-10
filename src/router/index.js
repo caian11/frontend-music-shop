@@ -43,8 +43,8 @@ const routes = [
     component: RTL,
   },
   {
-    path: "/profile",
-    name: "Profile",
+    path: "/usuario",
+    name: "usuario",
     component: Profile,
     meta: { requiresAuth: true },
   },
