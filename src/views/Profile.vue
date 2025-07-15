@@ -4,7 +4,6 @@ import { useStore } from "vuex";
 
 import setNavPills from "@/assets/js/nav-pills.js";
 import setTooltip from "@/assets/js/tooltip.js";
-import ProfileCard from "./components/ProfileCard.vue";
 import ArgonInput from "@/components/ArgonInput.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
 
@@ -234,7 +233,7 @@ onBeforeUnmount(() => {
     </div>
     <div class="py-4 container-fluid">
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
           <div class="card">
             <div class="card-header pb-0">
               <div class="d-flex align-items-center">
@@ -249,7 +248,7 @@ onBeforeUnmount(() => {
               <div class="row">
                 <div class="col-md-6">
                   <label for="example-text-input" class="form-control-label"
-                    >Nome de usuário</label
+                    >Nome</label
                   >
                   <argon-input type="text" value="lucky.jesse" />
                 </div>
@@ -259,48 +258,60 @@ onBeforeUnmount(() => {
                   >
                   <argon-input type="email" value="jesse@example.com" />
                 </div>
-                <div class="col-md-6">
-                  <label for="example-text-input" class="form-control-label"
-                    >Nome</label
-                  >
-                  <input class="form-control" type="text" value="Jesse" />
-                </div>
-                <div class="col-md-6">
-                  <label for="example-text-input" class="form-control-label"
-                    >Sobrenome</label
-                  >
-                  <argon-input type="text" value="Lucky" />
-                </div>
               </div>
               <hr class="horizontal dark" />
-              <p class="text-uppercase text-sm">Contact Information</p>
+              <p class="text-uppercase text-sm">INFORMAÇÕES DE ENDEREÇO</p>
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-5">
                   <label for="example-text-input" class="form-control-label"
-                    >Address</label
+                    >Endereço</label
                   >
                   <argon-input
                     type="text"
                     value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
                   />
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                   <label for="example-text-input" class="form-control-label"
-                    >City</label
+                  >Complemento</label
+                  >
+                  <argon-input
+                      type="text"
+                      value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label for="example-text-input" class="form-control-label"
+                  >CEP</label
+                  >
+                  <argon-input
+                      type="text"
+                      value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label for="example-text-input" class="form-control-label"
+                    >Número</label
                   >
                   <argon-input type="text" value="New York" />
                 </div>
                 <div class="col-md-4">
                   <label for="example-text-input" class="form-control-label"
-                    >Country</label
+                    >Bairro</label
                   >
                   <argon-input type="text" value="United States" />
                 </div>
                 <div class="col-md-4">
                   <label for="example-text-input" class="form-control-label"
-                    >Postal code</label
+                    >Cidade</label
                   >
                   <argon-input type="text" value="437300" />
+                </div>
+                <div class="col-md-2">
+                  <label for="example-text-input" class="form-control-label"
+                  >Estado</label
+                  >
+                  <argon-input type="text" value="New York" />
                 </div>
               </div>
               <hr class="horizontal dark" />
@@ -318,9 +329,6 @@ onBeforeUnmount(() => {
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-md-4">
-          <profile-card />
         </div>
       </div>
     </div>
