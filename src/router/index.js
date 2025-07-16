@@ -7,12 +7,18 @@ import RTL from "../views/Rtl.vue";
 import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import Signin from "../views/Signin.vue";
+import produto from "@/views/produto.vue";
+import ProdutoEdit from "@/views/ProdutoEdit.vue";
+import pedidos from "@/views/pedidos.vue";
+import pedidoDetalhes from "@/views/pedidoDetalhes.vue";
+import adicionarPedido from "@/views/adicionarPedido.vue";
+import adicionarProduto from "@/views/adicionarProduto.vue";
 
 const routes = [
   {
     path: "/",
-    name: "/",
-    redirect: "/dashboard-default",
+    name: "usuario",
+    redirect: "/usuario",
   },
   {
     path: "/dashboard-default",
@@ -25,6 +31,37 @@ const routes = [
     name: "Tables",
     component: Tables,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/adicionar-pedido',  // Caminho para adicionar um novo pedido
+    name: 'AdicionarPedido',
+    component: adicionarPedido,
+  },
+  {
+    path: '/pedidos',  // Caminho da rota para a lista de pedidos
+    name: 'Pedidos',    // Nome da rota
+    component: pedidos,  // O componente que será renderizado
+  },
+  {
+    path: '/pedidos/:id',  // Caminho para visualizar os detalhes do pedido
+    name: 'PedidoDetalhes',    // Nome da rota
+    component: pedidoDetalhes,  // O componente que será renderizado
+    props: true  // Permite passar os parâmetros da rota como propriedades para o componente
+  },
+  {
+    path: '/adicionar-produto',  // Rota para adicionar produto
+    name: 'AdicionarProduto',
+    component: adicionarProduto,
+  },
+  {
+    path: '/produto/:id',
+    name: 'Produto',
+    component: produto,
+  },
+  {
+    path: '/produto/edit/:id',
+    name: 'ProdutoEdit',
+    component: ProdutoEdit,
   },
   {
     path: "/billing",
