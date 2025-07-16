@@ -149,6 +149,15 @@ const adicionarEndereco = () => {
   usuario.value.enderecos.push(novoEndereco);
 };
 
+const removerNovoEndereco = (index) => {
+  // Remove o endereço novo (sem id)
+  if (!usuario.value.enderecos[index].id) {
+    usuario.value.enderecos.splice(index, 1);
+  }
+};
+
+
+
 const validarNomeEmail = () => {
   if (!usuario.value.nome.trim()) {
     alert("O campo Nome é obrigatório!");
@@ -559,9 +568,6 @@ watch(() => usuario.value?.enderecos, () => {
                     />
                   </div>
 
-
-
-
                   <hr
                     class="horizontal dark my-4"
                     v-if="index < usuario.enderecos.length - 1"
@@ -573,14 +579,28 @@ watch(() => usuario.value?.enderecos, () => {
                 <p class="text-muted">Nenhum endereço cadastrado.</p>
               </div>
 
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                @click="adicionarEndereco"
-                style="font-size: 20px; padding: 10px 20px; border-radius: 50%;"
-              >
-                <i class="fas fa-plus"></i>
-              </button>
+              <div class="d-flex justify-content-start align-items-center">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  @click="adicionarEndereco"
+                  style="font-size: 20px; padding: 10px 20px; border-radius: 50%;"
+                >
+                  <i class="fas fa-plus"></i>
+                </button>
+
+                <!-- Botão de Remover, ao lado do botão Adicionar -->
+                <div v-if="usuario && usuario.enderecos && usuario.enderecos.length && !usuario.enderecos[usuario.enderecos.length - 1].id">
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger ms-2"
+                    @click="removerNovoEndereco(usuario.enderecos.length - 1)"
+                    style="font-size: 20px; padding: 10px 20px; border-radius: 50%;"
+                  >
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
 
               <hr class="horizontal dark" />
               <p class="text-uppercase text-sm">About me</p>
