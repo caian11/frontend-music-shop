@@ -6,7 +6,6 @@ import setNavPills from "@/assets/js/nav-pills.js";
 import setTooltip from "@/assets/js/tooltip.js";
 import ArgonInput from "@/components/ArgonInput.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
-//import ModalConfirmacao from "@/components/ModalConfirmacao.vue";
 
 const body = document.getElementsByTagName("body")[0];
 const store = useStore();
@@ -87,8 +86,12 @@ const salvarDados = async () => {
 
   // Validar Endereços
   for (const endereco of usuario.value.enderecos) {
-    if (!validarEndereco(endereco)) {
-      return; // Se algum endereço for inválido, interrompe a execução
+    const errosEndereco = validarEndereco(endereco);
+
+    // Se algum erro for encontrado no endereço, interrompe o envio e destaca os campos com erro
+    if (Object.values(errosEndereco).includes(true)) {
+      console.log('Campos inválidos no endereço:', errosEndereco);
+      return; // Interrompe o salvamento
     }
   }
 
@@ -162,41 +165,64 @@ const validarNomeEmail = () => {
 };
 
 const validarEndereco = (endereco) => {
-  if (!String(endereco.logradouro).trim()) {
-    alert("O campo Logradouro é obrigatório!");
-    return false;
-  }
+  const erros = {};
 
-  if (!String(endereco.bairro).trim()) {
-    alert("O campo Bairro é obrigatório!");
-    return false;
-  }
+  // Verificar se o logradouro está vazio
+  erros.logradouro = !String(endereco.logradouro).trim();
 
-  if (!String(endereco.cep).trim()) {
-    alert("O campo CEP é obrigatório!");
-    return false;
-  }
+  // Verificar se o bairro está vazio
+  erros.bairro = !String(endereco.bairro).trim();
 
-  // O número pode ser um número, mas deve ser convertido para string para validação
-  if (!String(endereco.numero).trim()) {
-    alert("O campo Número é obrigatório!");
-    return false;
-  }
+  // Verificar se o CEP está vazio
+  erros.cep = !String(endereco.cep).trim();
 
-  // Validar se a cidade foi selecionada
-  if (!endereco.cidade || !endereco.cidade.nome.trim()) {
-    alert("O campo Cidade é obrigatório!");
-    return false;
-  }
+  // Verificar se o número está vazio
+  erros.numero = !String(endereco.numero).trim();
 
-  // Validar se a sigla da UF está preenchida
-  if (!endereco.cidade.uf || !endereco.cidade.uf.sigla.trim()) {
-    alert("O campo UF é obrigatório!");
-    return false;
-  }
+  // Verificar se a cidade está vazia
+  erros.cidade = !endereco.cidade || !endereco.cidade.nome.trim();
 
-  return true;
+  // Verificar se o UF está vazio
+  erros.uf = !endereco.cidade.uf || !endereco.cidade.uf.sigla.trim();
+
+  return erros;
 };
+
+const isValid = ref(true);
+const validarTudo = () => {
+  let valid = true;
+
+  // Validar nome e e-mail
+  if (!validarNomeEmail()) {
+    valid = false;
+  }
+
+  // Validar endereços
+  for (const endereco of usuario.value.enderecos) {
+    const errosEndereco = validarEndereco(endereco);
+
+    // Se algum erro for encontrado no endereço, interrupte o processo
+    if (Object.values(errosEndereco).includes(true)) {
+      valid = false;
+    }
+  }
+
+  // Atualiza o estado de isValid
+  isValid.value = valid;
+};
+
+watch(() => usuario.value, () => {
+  if (usuario.value && usuario.value.enderecos) {
+    validarTudo();  // Verifica a validade dos campos sempre que houver alteração
+  }
+});
+
+watch(() => usuario.value?.enderecos, () => {
+  if (usuario.value && usuario.value.enderecos) {
+    validarTudo();  // Verifica a validade sempre que o endereço for alterado
+  }
+}, { deep: true });
+
 
 </script>
 <style scoped>
@@ -415,6 +441,7 @@ const validarEndereco = (endereco) => {
                   size="sm"
                   class="ms-auto"
                   @click="salvarDados"
+                  :disabled="!isValid"
                 >
                 Salvar
                 </argon-button>
@@ -468,27 +495,47 @@ const validarEndereco = (endereco) => {
                 >
                   <div class="col-md-5">
                     <label class="form-control-label">Logradouro</label>
-                    <argon-input type="text" v-model="endereco.logradouro" />
+                    <argon-input
+                      type="text"
+                      v-model="endereco.logradouro"
+                      :class="{'input-error': validarEndereco(endereco).logradouro}"
+                    />
                   </div>
 
                   <div class="col-md-5">
                     <label class="form-control-label">Complemento</label>
-                    <argon-input type="text" v-model="endereco.complemento" />
+                    <argon-input
+                      type="text"
+                      v-model="endereco.complemento"
+                      :class="{'input-error': validarEndereco(endereco).complemento}"
+                    />
                   </div>
 
                   <div class="col-md-2">
                     <label class="form-control-label">CEP</label>
-                    <argon-input type="text" v-model="endereco.cep" />
+                    <argon-input
+                      type="text"
+                      v-model="endereco.cep"
+                      :class="{'input-error': validarEndereco(endereco).cep}"
+                    />
                   </div>
 
                   <div class="col-md-2">
                     <label class="form-control-label">Número</label>
-                    <argon-input type="text" v-model="endereco.numero" />
+                    <argon-input
+                      type="text"
+                      v-model="endereco.numero"
+                      :class="{'input-error': validarEndereco(endereco).numero}"
+                    />
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-control-label">Bairro</label>
-                    <argon-input type="text" v-model="endereco.bairro" />
+                    <argon-input
+                      type="text"
+                      v-model="endereco.bairro"
+                      :class="{'input-error': validarEndereco(endereco).bairro}"
+                    />
                   </div>
 
                   <div class="col-md-4">
@@ -498,6 +545,7 @@ const validarEndereco = (endereco) => {
                       :options="cidades"
                       label="nome"
                       @input="atualizarUF"
+                      :class="{'input-error': validarEndereco(endereco).cidade}"
                     />
                   </div>
 
@@ -507,8 +555,12 @@ const validarEndereco = (endereco) => {
                       type="text"
                       v-model="endereco.cidade.uf.sigla"
                       style="pointer-events: none; background-color: #f7f7f7"
+                      :class="{'input-error': validarEndereco(endereco).uf}"
                     />
                   </div>
+
+
+
 
                   <hr
                     class="horizontal dark my-4"
