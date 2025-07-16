@@ -31,6 +31,8 @@
     "vue-count-to": "1.0.13",
     "vue-flatpickr-component": "11.0.4",
     "vue-router": "4.3.0",
+    "vue-select": "^3.20.4",
+    "vue3-select": "^0.1.2",
     "vuex": "4.1.0"
   },
   "devDependencies": {

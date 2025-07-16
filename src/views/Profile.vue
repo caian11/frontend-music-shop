@@ -1,21 +1,62 @@
 <script setup>
-import { onBeforeMount, onMounted, onBeforeUnmount } from "vue";
+import { onBeforeMount, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import { useStore } from "vuex";
-
+import axios from "axios";
 import setNavPills from "@/assets/js/nav-pills.js";
 import setTooltip from "@/assets/js/tooltip.js";
 import ArgonInput from "@/components/ArgonInput.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
+//import ModalConfirmacao from "@/components/ModalConfirmacao.vue";
 
 const body = document.getElementsByTagName("body")[0];
-
 const store = useStore();
 
-onMounted(() => {
+const cidades = ref([]);
+const cidadeSelecionada = ref(null);
+const estadoSelecionado = ref("");
+const usuario = ref(null);
+
+onMounted(async () => {
   store.state.isAbsolute = true;
   setNavPills();
   setTooltip();
+
+  try {
+    const response = await axios.get("http://localhost:3000/cidades");
+    cidades.value = response.data;
+  } catch (error) {
+    console.error("Erro ao buscar cidades:", error);
+  }
+
+  try {
+    const response = await axios.get("http://localhost:3000/usuarios/me", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    usuario.value = response.data;
+    console.log("Usuário carregado:", usuario.value);
+
+    usuario.value.enderecos.forEach((endereco) => {
+      if (!endereco.cidade) {
+        endereco.cidade = { nome: "" };
+      }
+
+      if (!endereco.cidade.uf) {
+        endereco.cidade.uf = { sigla: "" };
+      }
+    });
+  } catch (error) {
+    console.error("Erro ao buscar o usuário:", error);
+  }
 });
+
+watch(cidadeSelecionada, (cidade) => {
+  console.log("Cidade selecionada:", cidade);
+  estadoSelecionado.value = cidade?.uf?.sigla || "";
+});
+
 onBeforeMount(() => {
   store.state.imageLayout = "profile-overview";
   store.state.showNavbar = false;
@@ -23,6 +64,7 @@ onBeforeMount(() => {
   store.state.hideConfigButton = true;
   body.classList.add("profile-overview");
 });
+
 onBeforeUnmount(() => {
   store.state.isAbsolute = false;
   store.state.imageLayout = "default";
@@ -31,7 +73,137 @@ onBeforeUnmount(() => {
   store.state.hideConfigButton = false;
   body.classList.remove("profile-overview");
 });
+
+const modalAberto = ref(false);
+const fecharModal = () => {
+  modalAberto.value = false;
+  window.location.reload();
+};
+
+const salvarDados = async () => {
+  if (!validarNomeEmail()) {
+    return; // Se a validação falhar, interrompe o envio
+  }
+
+  // Validar Endereços
+  for (const endereco of usuario.value.enderecos) {
+    if (!validarEndereco(endereco)) {
+      return; // Se algum endereço for inválido, interrompe a execução
+    }
+  }
+
+  try {
+    const dadosAtualizados = {
+      ...usuario.value,
+      id: undefined,
+      access_token: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+      enderecos: usuario.value.enderecos.map(endereco => ({
+        id: undefined,
+        created_at: undefined,
+        updated_at: undefined,
+        cidadeId: parseInt(endereco.cidade?.id, 10),
+        numero: parseInt(endereco.numero, 10),
+        logradouro: String(endereco.logradouro),
+        bairro: String(endereco.bairro),
+        cep: String(endereco.cep),
+      })),
+    };
+
+    const response = await axios.patch('http://localhost:3000/usuarios/me', dadosAtualizados, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    console.log('Usuário atualizado:', response.data);
+
+    modalAberto.value = true;  // Abre o modal
+    console.log('VALOR AQUI '+modalAberto.value);
+  } catch (error) {
+    console.error('Erro ao atualizar os dados:', error);
+    alert('Erro ao salvar os dados. Tente novamente.');
+  }
+};
+
+const adicionarEndereco = () => {
+  // Adiciona um novo objeto de endereço vazio
+  const novoEndereco = {
+    logradouro: '',
+    complemento: '',
+    numero: '',
+    bairro: '',
+    cep: '',
+    cidade: {
+      nome: '',
+      uf: {
+        sigla: ''
+      }
+    }
+  };
+
+  usuario.value.enderecos.push(novoEndereco);
+};
+
+const validarNomeEmail = () => {
+  if (!usuario.value.nome.trim()) {
+    alert("O campo Nome é obrigatório!");
+    return false;
+  }
+
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  if (!usuario.value.email.trim() || !emailRegex.test(usuario.value.email)) {
+    alert("O campo E-mail é obrigatório e deve ser um e-mail válido!");
+    return false;
+  }
+
+  return true;
+};
+
+const validarEndereco = (endereco) => {
+  if (!String(endereco.logradouro).trim()) {
+    alert("O campo Logradouro é obrigatório!");
+    return false;
+  }
+
+  if (!String(endereco.bairro).trim()) {
+    alert("O campo Bairro é obrigatório!");
+    return false;
+  }
+
+  if (!String(endereco.cep).trim()) {
+    alert("O campo CEP é obrigatório!");
+    return false;
+  }
+
+  // O número pode ser um número, mas deve ser convertido para string para validação
+  if (!String(endereco.numero).trim()) {
+    alert("O campo Número é obrigatório!");
+    return false;
+  }
+
+  // Validar se a cidade foi selecionada
+  if (!endereco.cidade || !endereco.cidade.nome.trim()) {
+    alert("O campo Cidade é obrigatório!");
+    return false;
+  }
+
+  // Validar se a sigla da UF está preenchida
+  if (!endereco.cidade.uf || !endereco.cidade.uf.sigla.trim()) {
+    alert("O campo UF é obrigatório!");
+    return false;
+  }
+
+  return true;
+};
+
 </script>
+<style scoped>
+.input-error {
+  border: 2px solid red;
+}
+</style>
 <template>
   <main>
     <div class="container-fluid">
@@ -238,9 +410,32 @@ onBeforeUnmount(() => {
             <div class="card-header pb-0">
               <div class="d-flex align-items-center">
                 <p class="mb-0">Edit Profile</p>
-                <argon-button color="success" size="sm" class="ms-auto"
-                  >Configurações</argon-button
+                <argon-button
+                  color="success"
+                  size="sm"
+                  class="ms-auto"
+                  @click="salvarDados"
                 >
+                Salvar
+                </argon-button>
+
+                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true" v-if="modalAberto" :class="{'show': modalAberto}" style="display: block;">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="fecharModal"></button>
+                      </div>
+                      <div class="modal-body">
+                        Seus dados foram atualizados com sucesso!
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="fecharModal">Fechar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
             <div class="card-body">
@@ -250,70 +445,91 @@ onBeforeUnmount(() => {
                   <label for="example-text-input" class="form-control-label"
                     >Nome</label
                   >
-                  <argon-input type="text" value="lucky.jesse" />
+                  <argon-input v-if="usuario" type="text" v-model="usuario.nome" />
                 </div>
                 <div class="col-md-6">
                   <label for="example-text-input" class="form-control-label"
                     >E-mail</label
                   >
-                  <argon-input type="email" value="jesse@example.com" />
+                  <argon-input v-if="usuario" type="email" v-model="usuario.email" />
                 </div>
               </div>
               <hr class="horizontal dark" />
+
               <p class="text-uppercase text-sm">INFORMAÇÕES DE ENDEREÇO</p>
-              <div class="row">
-                <div class="col-md-5">
-                  <label for="example-text-input" class="form-control-label"
-                    >Endereço</label
-                  >
-                  <argon-input
-                    type="text"
-                    value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                  />
-                </div>
-                <div class="col-md-5">
-                  <label for="example-text-input" class="form-control-label"
-                  >Complemento</label
-                  >
-                  <argon-input
+
+              <div
+                v-if="usuario && usuario.enderecos && usuario.enderecos.length"
+              >
+                <div
+                  class="row"
+                  v-for="(endereco, index) in usuario.enderecos"
+                  :key="endereco.id"
+                >
+                  <div class="col-md-5">
+                    <label class="form-control-label">Logradouro</label>
+                    <argon-input type="text" v-model="endereco.logradouro" />
+                  </div>
+
+                  <div class="col-md-5">
+                    <label class="form-control-label">Complemento</label>
+                    <argon-input type="text" v-model="endereco.complemento" />
+                  </div>
+
+                  <div class="col-md-2">
+                    <label class="form-control-label">CEP</label>
+                    <argon-input type="text" v-model="endereco.cep" />
+                  </div>
+
+                  <div class="col-md-2">
+                    <label class="form-control-label">Número</label>
+                    <argon-input type="text" v-model="endereco.numero" />
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-control-label">Bairro</label>
+                    <argon-input type="text" v-model="endereco.bairro" />
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-control-label">Cidade</label>
+                    <v-select
+                      v-model="endereco.cidade"
+                      :options="cidades"
+                      label="nome"
+                      @input="atualizarUF"
+                    />
+                  </div>
+
+                  <div class="col-md-2">
+                    <label class="form-control-label">UF</label>
+                    <argon-input
                       type="text"
-                      value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
+                      v-model="endereco.cidade.uf.sigla"
+                      style="pointer-events: none; background-color: #f7f7f7"
+                    />
+                  </div>
+
+                  <hr
+                    class="horizontal dark my-4"
+                    v-if="index < usuario.enderecos.length - 1"
                   />
-                </div>
-                <div class="col-md-2">
-                  <label for="example-text-input" class="form-control-label"
-                  >CEP</label
-                  >
-                  <argon-input
-                      type="text"
-                      value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                  />
-                </div>
-                <div class="col-md-2">
-                  <label for="example-text-input" class="form-control-label"
-                    >Número</label
-                  >
-                  <argon-input type="text" value="New York" />
-                </div>
-                <div class="col-md-4">
-                  <label for="example-text-input" class="form-control-label"
-                    >Bairro</label
-                  >
-                  <argon-input type="text" value="United States" />
-                </div>
-                <div class="col-md-4">
-                  <label for="example-text-input" class="form-control-label"
-                    >Cidade</label
-                  >
-                  <argon-input type="text" value="437300" />
-                </div>
-                <div class="col-md-2">
-                  <label for="example-text-input" class="form-control-label"
-                  >Estado</label
-                  >
-                  <argon-input type="text" value="New York" />
                 </div>
               </div>
+
+              <div v-else>
+                <p class="text-muted">Nenhum endereço cadastrado.</p>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                @click="adicionarEndereco"
+                style="font-size: 20px; padding: 10px 20px; border-radius: 50%;"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+
               <hr class="horizontal dark" />
               <p class="text-uppercase text-sm">About me</p>
               <div class="row">
