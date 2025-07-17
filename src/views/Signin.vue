@@ -1,57 +1,52 @@
 <script setup>
-import { ref, onBeforeMount, onBeforeUnmount } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { ref, onBeforeMount, onBeforeUnmount } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import axios from "axios";
 
-import Navbar from '@/examples/PageLayout/Navbar.vue';
-import ArgonInput from '@/components/ArgonInput.vue';
-import ArgonSwitch from '@/components/ArgonSwitch.vue';
-import ArgonButton from '@/components/ArgonButton.vue';
+import Navbar from "@/examples/PageLayout/Navbar.vue";
+import ArgonInput from "@/components/ArgonInput.vue";
+import ArgonSwitch from "@/components/ArgonSwitch.vue";
+import ArgonButton from "@/components/ArgonButton.vue";
 
 const store = useStore();
 const router = useRouter();
 const body = document.body;
 
-// visibilidade dos elementos de layout
 onBeforeMount(() => {
   store.state.hideConfigButton = true;
   store.state.showNavbar = false;
   store.state.showSidenav = false;
   store.state.showFooter = false;
-  body.classList.remove('bg-gray-100');
+  body.classList.remove("bg-gray-100");
 });
 onBeforeUnmount(() => {
   store.state.hideConfigButton = false;
   store.state.showNavbar = true;
   store.state.showSidenav = true;
   store.state.showFooter = true;
-  body.classList.add('bg-gray-100');
+  body.classList.add("bg-gray-100");
 });
 
-// **Novas refs para o formulário**
-const email = ref('');
-const senha = ref('');
+const email = ref("");
+const senha = ref("");
 const lembrar = ref(false);
-const error = ref('');
+const error = ref("");
 
-// **Função de login**
 async function handleLogin() {
-  error.value = '';
+  error.value = "";
   try {
-    const { data } = await axios.post('http://localhost:3000/auth/login', {
+    const { data } = await axios.post("http://localhost:3000/auth/login", {
       email: email.value,
       senha: senha.value,
       rememberMe: lembrar.value,
     });
-    // Armazena o token e configura header
-    localStorage.setItem('token', data.access_token);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`;
-    // Redireciona para dashboard (ajuste a rota conforme seu router)
-    await router.push({ name: 'Dashboard' });
+    localStorage.setItem("token", data.access_token);
+    axios.defaults.headers.common["Authorization"] =
+      `Bearer ${data.access_token}`;
+    await router.push({ name: "Dashboard" });
   } catch (err) {
-    // Exibe mensagem de erro vinda do backend (ou genérica)
-    error.value = err.response?.data?.message || 'Falha no login';
+    error.value = err.response?.data?.message || "Falha no login";
   }
 }
 </script>
@@ -82,7 +77,6 @@ async function handleLogin() {
                   <p class="mb-0">Entre com seu email e senha</p>
                 </div>
                 <div class="card-body">
-                  <!-- form com submit -->
                   <form @submit.prevent="handleLogin">
                     <div class="mb-3">
                       <argon-input
@@ -104,11 +98,14 @@ async function handleLogin() {
                         size="lg"
                       />
                     </div>
-                    <argon-switch v-model="lembrar" id="rememberMe" name="remember-me">
+                    <argon-switch
+                      v-model="lembrar"
+                      id="rememberMe"
+                      name="remember-me"
+                    >
                       Mantenha-me conectado
                     </argon-switch>
 
-                    <!-- exibe erro -->
                     <p v-if="error" class="text-danger mt-2">{{ error }}</p>
 
                     <div class="text-center">
@@ -138,16 +135,20 @@ async function handleLogin() {
                 </div>
               </div>
             </div>
-            <!-- coluna da imagem -->
             <div
               class="top-0 my-auto text-center col-6 d-lg-flex d-none h-100 pe-0 position-absolute end-0 justify-content-center flex-column"
             >
               <div
                 class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
-                style="background-image: url('https://images.unsplash.com/photo-1627407661127-fe96129c06dc?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3'); background-size: cover;"
+                style="
+                  background-image: url(&quot;https://images.unsplash.com/photo-1627407661127-fe96129c06dc?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&quot;);
+                  background-size: cover;
+                "
               >
                 <span class="mask bg-gradient-success opacity-6"></span>
-                <h4 class="mt-5 text-white font-weight-bolder position-relative">
+                <h4
+                  class="mt-5 text-white font-weight-bolder position-relative"
+                >
                   "Sua paixão em cada nota"
                 </h4>
                 <p class="text-white position-relative">

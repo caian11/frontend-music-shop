@@ -33,23 +33,23 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/adicionar-pedido',  // Caminho para adicionar um novo pedido
+    path: '/adicionar-pedido',
     name: 'AdicionarPedido',
     component: adicionarPedido,
   },
   {
-    path: '/pedidos',  // Caminho da rota para a lista de pedidos
-    name: 'Pedidos',    // Nome da rota
-    component: pedidos,  // O componente que será renderizado
+    path: '/pedidos',
+    name: 'Pedidos',
+    component: pedidos,
   },
   {
-    path: '/pedidos/:id',  // Caminho para visualizar os detalhes do pedido
-    name: 'PedidoDetalhes',    // Nome da rota
-    component: pedidoDetalhes,  // O componente que será renderizado
-    props: true  // Permite passar os parâmetros da rota como propriedades para o componente
+    path: '/pedidos/:id',
+    name: 'PedidoDetalhes',
+    component: pedidoDetalhes,
+    props: true
   },
   {
-    path: '/adicionar-produto',  // Rota para adicionar produto
+    path: '/adicionar-produto',
     name: 'AdicionarProduto',
     component: adicionarProduto,
   },

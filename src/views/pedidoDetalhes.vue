@@ -10,26 +10,30 @@
       </div>
 
       <div v-else>
-        <!-- Exibição condicional: Garantir que pedido existe -->
         <div v-if="pedido">
-          <p><strong>Valor:</strong> R$ {{ parseFloat(pedido.valor).toFixed(2) }}</p>
+          <p>
+            <strong>Valor:</strong> R$ {{ parseFloat(pedido.valor).toFixed(2) }}
+          </p>
           <p><strong>Data:</strong> {{ pedido.data }}</p>
-          <p><strong>Forma de Pagamento:</strong> {{ pedido.formaPagamento }}</p>
+          <p>
+            <strong>Forma de Pagamento:</strong> {{ pedido.formaPagamento }}
+          </p>
           <p><strong>Status:</strong> {{ pedido.status }}</p>
 
           <h6>Produtos:</h6>
           <ul>
             <li v-for="produto in pedido.produtos" :key="produto.id">
-              <strong>{{ produto.nome }}</strong> - R$ {{ parseFloat(produto.valor).toFixed(2) }}
+              <strong>{{ produto.nome }}</strong> - R$
+              {{ parseFloat(produto.valor).toFixed(2) }}
               <br />
-              Marca: {{ produto.marca }} | Estoque: {{ produto.quantidadeEstoque }}
+              Marca: {{ produto.marca }} | Estoque:
+              {{ produto.quantidadeEstoque }}
               <br />
               Descrição: {{ produto.descricao }}
             </li>
           </ul>
         </div>
 
-        <!-- Caso o pedido não seja encontrado, exibe a mensagem -->
         <div v-else>
           <p class="text-danger">Pedido não encontrado.</p>
         </div>
@@ -54,34 +58,34 @@ export default {
     const router = useRouter();
     const pedidoId = route.params.id;
 
-    // Função para buscar os detalhes do pedido
     const fetchPedido = async () => {
       try {
         const token = localStorage.getItem("token");
 
-        const response = await axios.get(`http://localhost:3000/pedidos/${pedidoId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await axios.get(
+          `http://localhost:3000/pedidos/${pedidoId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
-        pedido.value = response.data;  // Armazena o pedido na variável reativa
+        pedido.value = response.data;
       } catch (error) {
         console.error("Erro ao buscar pedido:", error);
         alert("Erro ao buscar pedido.");
       } finally {
-        loading.value = false;  // Define o loading como false após a requisição
+        loading.value = false;
       }
     };
 
-    // Função para voltar à página anterior
     const goBack = () => {
       router.push("/pedidos");
     };
 
-    // Chama a função quando o componente for montado
     onMounted(() => {
-      fetchPedido();  // Carrega os detalhes do pedido
+      fetchPedido();
     });
 
     return {
@@ -94,7 +98,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos adicionais para o componente */
 .table {
   margin-top: 20px;
 }

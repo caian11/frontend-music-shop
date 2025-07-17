@@ -11,34 +11,41 @@
       <div v-else-if="produto" class="table-responsive">
         <table class="table table-bordered table-striped table-hover">
           <tbody>
-          <tr>
-            <td><strong>Produto:</strong></td>
-            <td>{{ produto.nome }}</td>
-          </tr>
-          <tr>
-            <td><strong>Marca:</strong></td>
-            <td>{{ produto.marca || 'Sem Marca' }}</td>
-          </tr>
-          <tr>
-            <td><strong>Valor:</strong></td>
-            <td>{{ formatCurrency(produto.valor) }}</td>
-          </tr>
-          <tr>
-            <td><strong>Quantidade em Estoque:</strong></td>
-            <td>{{ produto.quantidadeEstoque }}</td>
-          </tr>
-          <tr>
-            <td><strong>Descrição:</strong></td>
-            <td>{{ produto.descricao || 'Sem descrição' }}</td>
-          </tr>
-          <tr>
-            <td><strong>Status:</strong></td>
-            <td>
-                <span class="badge" :class="produto.status ? 'bg-gradient-success' : 'bg-gradient-secondary'">
-                  {{ produto.status ? 'Ativo' : 'Inativo' }}
+            <tr>
+              <td><strong>Produto:</strong></td>
+              <td>{{ produto.nome }}</td>
+            </tr>
+            <tr>
+              <td><strong>Marca:</strong></td>
+              <td>{{ produto.marca || "Sem Marca" }}</td>
+            </tr>
+            <tr>
+              <td><strong>Valor:</strong></td>
+              <td>{{ formatCurrency(produto.valor) }}</td>
+            </tr>
+            <tr>
+              <td><strong>Quantidade em Estoque:</strong></td>
+              <td>{{ produto.quantidadeEstoque }}</td>
+            </tr>
+            <tr>
+              <td><strong>Descrição:</strong></td>
+              <td>{{ produto.descricao || "Sem descrição" }}</td>
+            </tr>
+            <tr>
+              <td><strong>Status:</strong></td>
+              <td>
+                <span
+                  class="badge"
+                  :class="
+                    produto.status
+                      ? 'bg-gradient-success'
+                      : 'bg-gradient-secondary'
+                  "
+                >
+                  {{ produto.status ? "Ativo" : "Inativo" }}
                 </span>
-            </td>
-          </tr>
+              </td>
+            </tr>
           </tbody>
         </table>
 
@@ -69,15 +76,17 @@ export default {
     const route = useRoute();
     const produtoId = route.params.id;
 
-    // Função para pegar o produto por ID
     const fetchProduto = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:3000/produto/${produtoId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await axios.get(
+          `http://localhost:3000/produto/${produtoId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
         produto.value = response.data;
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
@@ -86,7 +95,6 @@ export default {
       }
     };
 
-    // Método para formatar o valor como moeda
     const formatCurrency = (value) => {
       return value.toLocaleString("pt-BR", {
         style: "currency",
@@ -101,21 +109,18 @@ export default {
     return {
       produto,
       loading,
-      formatCurrency, // Expondo o método para o template
+      formatCurrency,
     };
   },
 };
 </script>
 
-
 <style scoped>
-/* Estilos do card */
 .card {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilos do cabeçalho */
 .card-header {
   background-color: #f8f9fa;
   border-bottom: 1px solid #ddd;
@@ -127,7 +132,6 @@ export default {
   color: #007bff;
 }
 
-/* Tabela */
 table {
   width: 100%;
   margin-bottom: 1rem;
@@ -155,7 +159,6 @@ table .badge {
   font-size: 0.85rem;
 }
 
-/* Botão Voltar */
 button,
 .router-link-active {
   margin-top: 10px;
@@ -164,7 +167,6 @@ button,
   border-radius: 4px;
 }
 
-/* Estilos de carregamento */
 .text-muted {
   color: #6c757d !important;
 }
@@ -173,9 +175,7 @@ button,
   text-align: center;
 }
 
-/* Mensagens de erro */
 .text-danger {
   color: #dc3545;
 }
-
 </style>

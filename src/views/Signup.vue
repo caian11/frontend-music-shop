@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
+import { ref } from "vue";
+import axios from "axios";
 import { onBeforeUnmount, onBeforeMount } from "vue";
 import { useStore } from "vuex";
 
@@ -29,54 +29,52 @@ onBeforeUnmount(() => {
   body.classList.add("bg-gray-100");
 });
 
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const successMessage = ref('');
-const errorMessage = ref('');
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const successMessage = ref("");
+const errorMessage = ref("");
 
 const register = async () => {
   try {
-    const response = await axios.post('http://localhost:3000/usuarios', {
+    const response = await axios.post("http://localhost:3000/usuarios", {
       nome: name.value,
       email: email.value,
-      senha: password.value
+      senha: password.value,
     });
-    console.log('Usuário cadastrado com sucesso:', response.data);
-    successMessage.value = 'Usuário cadastrado com sucesso!';
-    errorMessage.value = '';
-    // Opcional limpar os campos após o cadastro
-    name.value = '';
-    email.value = '';
-    password.value = '';
+    console.log("Usuário cadastrado com sucesso:", response.data);
+    successMessage.value = "Usuário cadastrado com sucesso!";
+    errorMessage.value = "";
+    name.value = "";
+    email.value = "";
+    password.value = "";
   } catch (error) {
     if (error.response) {
-      //Verifica se o erro é de validação (status 400)
       if (error.response.status === 400) {
-        //Supondo que o back-end retorne um objeto com erros detalhados, por exemplo:
-        //{ errors: [{ field: 'email', message: 'Email já existe' }, { field: 'senha', message: 'A senha deve conter...' }] }
         const errors = error.response.data.errors;
         if (errors && Array.isArray(errors)) {
-          const emailError = errors.find(e => e.field === 'email');
-          const passwordError = errors.find(e => e.field === 'senha');
+          const emailError = errors.find((e) => e.field === "email");
+          const passwordError = errors.find((e) => e.field === "senha");
           if (emailError) {
-            errorMessage.value = 'O email informado já está em uso.';
+            errorMessage.value = "O email informado já está em uso.";
           } else if (passwordError) {
             errorMessage.value = `Erro na senha: ${passwordError.message}`;
           } else {
-            errorMessage.value = 'Erro ao cadastrar usuário. Verifique os dados informados.';
+            errorMessage.value =
+              "Erro ao cadastrar usuário. Verifique os dados informados.";
           }
         } else {
-          // Se não houver array de erros, usa a mensagem padrão
-          errorMessage.value = error.response.data.message || 'Erro ao cadastrar usuário.';
+          errorMessage.value =
+            error.response.data.message || "Erro ao cadastrar usuário.";
         }
       } else {
-        errorMessage.value = 'Erro ao cadastrar usuário. Tente novamente mais tarde.';
+        errorMessage.value =
+          "Erro ao cadastrar usuário. Tente novamente mais tarde.";
       }
     } else {
-      errorMessage.value = 'Não foi possível conectar ao servidor.';
+      errorMessage.value = "Não foi possível conectar ao servidor.";
     }
-    successMessage.value = '';
+    successMessage.value = "";
   }
 };
 </script>
@@ -102,9 +100,7 @@ const register = async () => {
         <div class="row justify-content-center">
           <div class="col-lg-5 text-center mx-auto">
             <h1 class="text-white mb-2 mt-5">Bem vindo!</h1>
-            <p class="text-lead text-white">
-              Faça login ou crie uma conta.
-            </p>
+            <p class="text-lead text-white">Faça login ou crie uma conta.</p>
           </div>
         </div>
       </div>
@@ -117,11 +113,9 @@ const register = async () => {
               <h5>Registre-se</h5>
             </div>
             <div class="card-body">
-              <!-- Exibe a mensagem de sucesso se existir -->
               <div v-if="successMessage" class="alert alert-success">
                 {{ successMessage }}
               </div>
-              <!-- Exibe a mensagem de erro seexistir -->
               <div v-if="errorMessage" class="alert alert-danger">
                 {{ errorMessage }}
               </div>
@@ -168,7 +162,7 @@ const register = async () => {
                 </div>
                 <p class="text-sm mt-3 mb-0">
                   Já tem uma conta?
-                  <a href="../../signin" class="text-dark font-weight-bolder" >
+                  <a href="../../signin" class="text-dark font-weight-bolder">
                     Entrar
                   </a>
                 </p>

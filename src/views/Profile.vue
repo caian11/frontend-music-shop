@@ -35,7 +35,6 @@ onMounted(async () => {
     });
 
     usuario.value = response.data;
-    console.log("Usuário carregado:", usuario.value);
 
     usuario.value.enderecos.forEach((endereco) => {
       if (!endereco.cidade) {
@@ -52,7 +51,6 @@ onMounted(async () => {
 });
 
 watch(cidadeSelecionada, (cidade) => {
-  console.log("Cidade selecionada:", cidade);
   estadoSelecionado.value = cidade?.uf?.sigla || "";
 });
 
@@ -81,17 +79,14 @@ const fecharModal = () => {
 
 const salvarDados = async () => {
   if (!validarNomeEmail()) {
-    return; // Se a validação falhar, interrompe o envio
+    return;
   }
 
-  // Validar Endereços
   for (const endereco of usuario.value.enderecos) {
     const errosEndereco = validarEndereco(endereco);
 
-    // Se algum erro for encontrado no endereço, interrompe o envio e destaca os campos com erro
     if (Object.values(errosEndereco).includes(true)) {
-      console.log('Campos inválidos no endereço:', errosEndereco);
-      return; // Interrompe o salvamento
+      return;
     }
   }
 
@@ -102,7 +97,7 @@ const salvarDados = async () => {
       access_token: undefined,
       createdAt: undefined,
       updatedAt: undefined,
-      enderecos: usuario.value.enderecos.map(endereco => ({
+      enderecos: usuario.value.enderecos.map((endereco) => ({
         id: undefined,
         created_at: undefined,
         updated_at: undefined,
@@ -114,49 +109,46 @@ const salvarDados = async () => {
       })),
     };
 
-    const response = await axios.patch('http://localhost:3000/usuarios/me', dadosAtualizados, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+    const response = await axios.patch(
+      "http://localhost:3000/usuarios/me",
+      dadosAtualizados,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       },
-    });
+    );
 
-    console.log('Usuário atualizado:', response.data);
-
-    modalAberto.value = true;  // Abre o modal
-    console.log('VALOR AQUI '+modalAberto.value);
+    modalAberto.value = true;
   } catch (error) {
-    console.error('Erro ao atualizar os dados:', error);
-    alert('Erro ao salvar os dados. Tente novamente.');
+    console.error("Erro ao atualizar os dados:", error);
+    alert("Erro ao salvar os dados. Tente novamente.");
   }
 };
 
 const adicionarEndereco = () => {
-  // Adiciona um novo objeto de endereço vazio
   const novoEndereco = {
-    logradouro: '',
-    complemento: '',
-    numero: '',
-    bairro: '',
-    cep: '',
+    logradouro: "",
+    complemento: "",
+    numero: "",
+    bairro: "",
+    cep: "",
     cidade: {
-      nome: '',
+      nome: "",
       uf: {
-        sigla: ''
-      }
-    }
+        sigla: "",
+      },
+    },
   };
 
   usuario.value.enderecos.push(novoEndereco);
 };
 
 const removerNovoEndereco = (index) => {
-  // Remove o endereço novo (sem id)
   if (!usuario.value.enderecos[index].id) {
     usuario.value.enderecos.splice(index, 1);
   }
 };
-
-
 
 const validarNomeEmail = () => {
   if (!usuario.value.nome.trim()) {
@@ -176,22 +168,16 @@ const validarNomeEmail = () => {
 const validarEndereco = (endereco) => {
   const erros = {};
 
-  // Verificar se o logradouro está vazio
   erros.logradouro = !String(endereco.logradouro).trim();
 
-  // Verificar se o bairro está vazio
   erros.bairro = !String(endereco.bairro).trim();
 
-  // Verificar se o CEP está vazio
   erros.cep = !String(endereco.cep).trim();
 
-  // Verificar se o número está vazio
   erros.numero = !String(endereco.numero).trim();
 
-  // Verificar se a cidade está vazia
   erros.cidade = !endereco.cidade || !endereco.cidade.nome.trim();
 
-  // Verificar se o UF está vazio
   erros.uf = !endereco.cidade.uf || !endereco.cidade.uf.sigla.trim();
 
   return erros;
@@ -201,38 +187,39 @@ const isValid = ref(true);
 const validarTudo = () => {
   let valid = true;
 
-  // Validar nome e e-mail
   if (!validarNomeEmail()) {
     valid = false;
   }
 
-  // Validar endereços
   for (const endereco of usuario.value.enderecos) {
     const errosEndereco = validarEndereco(endereco);
 
-    // Se algum erro for encontrado no endereço, interrupte o processo
     if (Object.values(errosEndereco).includes(true)) {
       valid = false;
     }
   }
 
-  // Atualiza o estado de isValid
   isValid.value = valid;
 };
 
-watch(() => usuario.value, () => {
-  if (usuario.value && usuario.value.enderecos) {
-    validarTudo();  // Verifica a validade dos campos sempre que houver alteração
-  }
-});
+watch(
+  () => usuario.value,
+  () => {
+    if (usuario.value && usuario.value.enderecos) {
+      validarTudo();
+    }
+  },
+);
 
-watch(() => usuario.value?.enderecos, () => {
-  if (usuario.value && usuario.value.enderecos) {
-    validarTudo();  // Verifica a validade sempre que o endereço for alterado
-  }
-}, { deep: true });
-
-
+watch(
+  () => usuario.value?.enderecos,
+  () => {
+    if (usuario.value && usuario.value.enderecos) {
+      validarTudo();
+    }
+  },
+  { deep: true },
+);
 </script>
 <style scoped>
 .input-error {
@@ -452,26 +439,48 @@ watch(() => usuario.value?.enderecos, () => {
                   @click="salvarDados"
                   :disabled="!isValid"
                 >
-                Salvar
+                  Salvar
                 </argon-button>
 
-                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true" v-if="modalAberto" :class="{'show': modalAberto}" style="display: block;">
+                <div
+                  class="modal fade"
+                  id="successModal"
+                  tabindex="-1"
+                  aria-labelledby="successModalLabel"
+                  aria-hidden="true"
+                  v-if="modalAberto"
+                  :class="{ show: modalAberto }"
+                  style="display: block"
+                >
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="fecharModal"></button>
+                        <h5 class="modal-title" id="successModalLabel">
+                          Sucesso!
+                        </h5>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                          @click="fecharModal"
+                        ></button>
                       </div>
                       <div class="modal-body">
                         Seus dados foram atualizados com sucesso!
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="fecharModal">Fechar</button>
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          @click="fecharModal"
+                        >
+                          Fechar
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
             <div class="card-body">
@@ -481,13 +490,21 @@ watch(() => usuario.value?.enderecos, () => {
                   <label for="example-text-input" class="form-control-label"
                     >Nome</label
                   >
-                  <argon-input v-if="usuario" type="text" v-model="usuario.nome" />
+                  <argon-input
+                    v-if="usuario"
+                    type="text"
+                    v-model="usuario.nome"
+                  />
                 </div>
                 <div class="col-md-6">
                   <label for="example-text-input" class="form-control-label"
                     >E-mail</label
                   >
-                  <argon-input v-if="usuario" type="email" v-model="usuario.email" />
+                  <argon-input
+                    v-if="usuario"
+                    type="email"
+                    v-model="usuario.email"
+                  />
                 </div>
               </div>
               <hr class="horizontal dark" />
@@ -507,7 +524,9 @@ watch(() => usuario.value?.enderecos, () => {
                     <argon-input
                       type="text"
                       v-model="endereco.logradouro"
-                      :class="{'input-error': validarEndereco(endereco).logradouro}"
+                      :class="{
+                        'input-error': validarEndereco(endereco).logradouro,
+                      }"
                     />
                   </div>
 
@@ -516,7 +535,9 @@ watch(() => usuario.value?.enderecos, () => {
                     <argon-input
                       type="text"
                       v-model="endereco.complemento"
-                      :class="{'input-error': validarEndereco(endereco).complemento}"
+                      :class="{
+                        'input-error': validarEndereco(endereco).complemento,
+                      }"
                     />
                   </div>
 
@@ -525,7 +546,7 @@ watch(() => usuario.value?.enderecos, () => {
                     <argon-input
                       type="text"
                       v-model="endereco.cep"
-                      :class="{'input-error': validarEndereco(endereco).cep}"
+                      :class="{ 'input-error': validarEndereco(endereco).cep }"
                     />
                   </div>
 
@@ -534,7 +555,9 @@ watch(() => usuario.value?.enderecos, () => {
                     <argon-input
                       type="text"
                       v-model="endereco.numero"
-                      :class="{'input-error': validarEndereco(endereco).numero}"
+                      :class="{
+                        'input-error': validarEndereco(endereco).numero,
+                      }"
                     />
                   </div>
 
@@ -543,7 +566,9 @@ watch(() => usuario.value?.enderecos, () => {
                     <argon-input
                       type="text"
                       v-model="endereco.bairro"
-                      :class="{'input-error': validarEndereco(endereco).bairro}"
+                      :class="{
+                        'input-error': validarEndereco(endereco).bairro,
+                      }"
                     />
                   </div>
 
@@ -554,7 +579,9 @@ watch(() => usuario.value?.enderecos, () => {
                       :options="cidades"
                       label="nome"
                       @input="atualizarUF"
-                      :class="{'input-error': validarEndereco(endereco).cidade}"
+                      :class="{
+                        'input-error': validarEndereco(endereco).cidade,
+                      }"
                     />
                   </div>
 
@@ -564,7 +591,7 @@ watch(() => usuario.value?.enderecos, () => {
                       type="text"
                       v-model="endereco.cidade.uf.sigla"
                       style="pointer-events: none; background-color: #f7f7f7"
-                      :class="{'input-error': validarEndereco(endereco).uf}"
+                      :class="{ 'input-error': validarEndereco(endereco).uf }"
                     />
                   </div>
 
@@ -584,18 +611,32 @@ watch(() => usuario.value?.enderecos, () => {
                   type="button"
                   class="btn btn-outline-secondary"
                   @click="adicionarEndereco"
-                  style="font-size: 20px; padding: 10px 20px; border-radius: 50%;"
+                  style="
+                    font-size: 20px;
+                    padding: 10px 20px;
+                    border-radius: 50%;
+                  "
                 >
                   <i class="fas fa-plus"></i>
                 </button>
 
-                <!-- Botão de Remover, ao lado do botão Adicionar -->
-                <div v-if="usuario && usuario.enderecos && usuario.enderecos.length && !usuario.enderecos[usuario.enderecos.length - 1].id">
+                <div
+                  v-if="
+                    usuario &&
+                    usuario.enderecos &&
+                    usuario.enderecos.length &&
+                    !usuario.enderecos[usuario.enderecos.length - 1].id
+                  "
+                >
                   <button
                     type="button"
                     class="btn btn-outline-danger ms-2"
                     @click="removerNovoEndereco(usuario.enderecos.length - 1)"
-                    style="font-size: 20px; padding: 10px 20px; border-radius: 50%;"
+                    style="
+                      font-size: 20px;
+                      padding: 10px 20px;
+                      border-radius: 50%;
+                    "
                   >
                     <i class="fas fa-minus"></i>
                   </button>

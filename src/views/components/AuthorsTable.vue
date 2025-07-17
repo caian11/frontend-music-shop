@@ -2,7 +2,6 @@
   <div class="card">
     <div class="card-header pb-0">
       <h6>Produtos</h6>
-      <!-- Botão para Adicionar Novo Produto -->
       <router-link to="/adicionar-produto" class="btn btn-success btn-sm">
         Adicionar Produto
       </router-link>
@@ -66,17 +65,16 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 export default {
-  name: "Produto", // Nome do componente
+  name: "Produto",
   setup() {
     const produtos = ref([]);
 
-    // Função para pegar os produtos da API
     const fetchProdutos = async () => {
       try {
-        const token = localStorage.getItem("token"); // Obtém o token do localStorage
+        const token = localStorage.getItem("token");
         const response = await axios.get("http://localhost:3000/produto", {
           headers: {
-            Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho Authorization
+            Authorization: `Bearer ${token}`,
           },
         });
         produtos.value = response.data;
@@ -85,7 +83,6 @@ export default {
       }
     };
 
-    // Função para excluir o produto
     const deleteProduto = async (id) => {
       const confirmDelete = window.confirm("Tem certeza que deseja excluir este produto?");
       if (confirmDelete) {
@@ -96,7 +93,6 @@ export default {
               Authorization: `Bearer ${token}`,
             },
           });
-          // Atualiza a lista após a exclusão
           produtos.value = produtos.value.filter((produto) => produto.id !== id);
           alert("Produto excluído com sucesso!");
         } catch (error) {
@@ -106,7 +102,6 @@ export default {
       }
     };
 
-    // Chama a função quando o componente for montado
     onMounted(() => {
       fetchProdutos();
     });
@@ -120,13 +115,10 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos do card */
 .card {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-/* Tabela */
 table {
   width: 100%;
   margin-bottom: 1rem;
@@ -150,7 +142,6 @@ table td {
   background-color: #f1f3f5;
 }
 
-/* Botão e ícones */
 .btn-group {
   display: flex;
   gap: 10px;
@@ -192,12 +183,10 @@ table td {
   background-color: #e0a800;
 }
 
-/* Alinhamento do texto */
 .text-center {
   text-align: center;
 }
 
-/* Mensagens de erro */
 .text-danger {
   color: #dc3545;
 }

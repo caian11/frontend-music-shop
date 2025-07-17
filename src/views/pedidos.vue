@@ -2,7 +2,6 @@
   <div class="card">
     <div class="card-header pb-0">
       <h6>Pedidos</h6>
-      <!-- Botão para adicionar novo pedido -->
       <button @click="goToAddPedido" class="btn btn-success btn-sm">Adicionar Novo Pedido</button>
     </div>
     <div class="card-body px-0 pt-0 pb-2">
@@ -72,27 +71,23 @@ export default {
   setup() {
     const pedidos = ref([]);
     const loading = ref(true);
-    const router = useRouter();  // Instanciando o router
+    const router = useRouter();
 
-    // Função para buscar os pedidos
     const fetchPedidos = async () => {
       try {
         const token = localStorage.getItem("token");
 
-        // Verificando se o token está presente
         if (!token) {
           alert("Token não encontrado. Faça login.");
           return;
         }
 
-        // Requisição para obter os pedidos
         const response = await axios.get("http://localhost:3000/pedidos", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        // Verificando a resposta
         if (response && response.data) {
           pedidos.value = response.data;
         } else {
@@ -106,12 +101,10 @@ export default {
       }
     };
 
-    // Função para redirecionar para a tela de adicionar novo pedido
     const goToAddPedido = () => {
       router.push({ name: "AdicionarPedido" });
     };
 
-    // Função para obter a classe do status
     const getStatusClass = (status) => {
       switch (status) {
         case "Pendente":
@@ -125,7 +118,6 @@ export default {
       }
     };
 
-    // Chama a função quando o componente for montado
     onMounted(() => {
       fetchPedidos();
     });
@@ -141,7 +133,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos adicionais para o componente */
 .table {
   margin-top: 20px;
 }

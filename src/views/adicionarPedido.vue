@@ -5,7 +5,6 @@
     </div>
     <div class="card-body">
       <form @submit.prevent="createPedido">
-        <!-- Número do Pedido - Gerado automaticamente -->
         <div class="form-group mb-3">
           <label for="numero">Número do Pedido</label>
           <input
@@ -17,18 +16,34 @@
           />
         </div>
 
-        <!-- Outros campos do pedido -->
         <div class="form-group mb-3">
           <label for="valor">Valor</label>
-          <input type="number" id="valor" v-model="pedido.valor" class="form-control" required />
+          <input
+            type="number"
+            id="valor"
+            v-model="pedido.valor"
+            class="form-control"
+            required
+          />
         </div>
         <div class="form-group mb-3">
           <label for="data">Data</label>
-          <input type="date" id="data" v-model="pedido.data" class="form-control" required />
+          <input
+            type="date"
+            id="data"
+            v-model="pedido.data"
+            class="form-control"
+            required
+          />
         </div>
         <div class="form-group mb-3">
           <label for="formaPagamento">Forma de Pagamento</label>
-          <select id="formaPagamento" v-model="pedido.formaPagamento" class="form-control" required>
+          <select
+            id="formaPagamento"
+            v-model="pedido.formaPagamento"
+            class="form-control"
+            required
+          >
             <option value="Cartão de Crédito">Cartão de Crédito</option>
             <option value="Boleto">Boleto</option>
             <option value="Pix">Pix</option>
@@ -36,39 +51,57 @@
         </div>
         <div class="form-group mb-3">
           <label for="status">Status</label>
-          <select id="status" v-model="pedido.status" class="form-control" required>
+          <select
+            id="status"
+            v-model="pedido.status"
+            class="form-control"
+            required
+          >
             <option value="Pendente">Pendente</option>
             <option value="Concluído">Concluído</option>
             <option value="Cancelado">Cancelado</option>
           </select>
         </div>
 
-        <!-- Tabela de Produtos -->
         <div class="form-group mb-3">
           <label for="produtos">Selecione os Produtos</label>
           <table class="table table-striped">
             <thead>
-            <tr>
-              <th><input type="checkbox" @change="toggleSelectAll" :checked="isAllSelected" /></th>
-              <th>Produto</th>
-              <th>Marca</th>
-              <th>Valor</th>
-              <th>Estoque</th>
-            </tr>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    @change="toggleSelectAll"
+                    :checked="isAllSelected"
+                  />
+                </th>
+                <th>Produto</th>
+                <th>Marca</th>
+                <th>Valor</th>
+                <th>Estoque</th>
+              </tr>
             </thead>
             <tbody>
-            <tr v-for="produto in produtos" :key="produto.id">
-              <td><input type="checkbox" :value="produto.id" v-model="pedido.produtos" /></td>
-              <td>{{ produto.nome }}</td>
-              <td>{{ produto.marca }}</td>
-              <td>R$ {{ parseFloat(produto.valor).toFixed(2) }}</td>
-              <td>{{ produto.quantidadeEstoque }}</td>
-            </tr>
+              <tr v-for="produto in produtos" :key="produto.id">
+                <td>
+                  <input
+                    type="checkbox"
+                    :value="produto.id"
+                    v-model="pedido.produtos"
+                  />
+                </td>
+                <td>{{ produto.nome }}</td>
+                <td>{{ produto.marca }}</td>
+                <td>R$ {{ parseFloat(produto.valor).toFixed(2) }}</td>
+                <td>{{ produto.quantidadeEstoque }}</td>
+              </tr>
             </tbody>
           </table>
         </div>
 
-        <button type="submit" class="btn btn-success btn-sm">Criar Pedido</button>
+        <button type="submit" class="btn btn-success btn-sm">
+          Criar Pedido
+        </button>
       </form>
     </div>
   </div>
@@ -83,18 +116,17 @@ export default {
   name: "AdicionarPedido",
   setup() {
     const pedido = ref({
-      numero: "",  // Este campo será preenchido automaticamente
+      numero: "",
       valor: 0,
       data: "",
       formaPagamento: "Cartão de Crédito",
       status: "Pendente",
-      produtos: [], // Array para armazenar os IDs dos produtos selecionados
+      produtos: [],
     });
     const produtos = ref([]);
-    const isAllSelected = ref(false);  // Controle para seleção de todos os produtos
+    const isAllSelected = ref(false);
     const router = useRouter();
 
-    // Função para buscar os produtos disponíveis
     const fetchProdutos = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -109,11 +141,10 @@ export default {
       }
     };
 
-    // Função para gerar o número do pedido automaticamente
     const generateNumeroPedido = () => {
       const date = new Date();
-      const timestamp = date.getTime();  // Gera um número único baseado no timestamp
-      pedido.value.numero = `PED-${timestamp}`;  // Exemplo de formato, como "PED-1626152192345"
+      const timestamp = date.getTime();
+      pedido.value.numero = `PED-${timestamp}`;
     };
 
     // Função para criar o pedido
@@ -121,47 +152,44 @@ export default {
       try {
         const token = localStorage.getItem("token");
 
-        // Garantir que os produtos sejam passados como um array de números inteiros
-        const produtosIds = pedido.value.produtos.map(Number);  // Converte os valores para inteiros
+        const produtosIds = pedido.value.produtos.map(Number);
 
         await axios.post(
           "http://localhost:3000/pedidos",
           {
             ...pedido.value,
-            produtos: produtosIds,  // Passa os IDs dos produtos como inteiros
+            produtos: produtosIds,
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         alert("Pedido criado com sucesso!");
-        router.push("/pedidos");  // Redireciona de volta para a listagem de pedidos
+        router.push("/pedidos");
       } catch (error) {
         console.error("Erro ao criar pedido:", error);
         alert("Erro ao criar pedido.");
       }
     };
 
-    // Função para selecionar/deselecionar todos os produtos
     const toggleSelectAll = () => {
       if (isAllSelected.value) {
-        pedido.value.produtos = produtos.value.map(produto => produto.id);
+        pedido.value.produtos = produtos.value.map((produto) => produto.id);
       } else {
         pedido.value.produtos = [];
       }
     };
 
-    // Função para verificar se todos os produtos estão selecionados
     const checkAllSelected = () => {
-      isAllSelected.value = pedido.value.produtos.length === produtos.value.length;
+      isAllSelected.value =
+        pedido.value.produtos.length === produtos.value.length;
     };
 
-    // Chama a função quando o componente for montado
     onMounted(() => {
       fetchProdutos();
-      generateNumeroPedido();  // Gera o número do pedido automaticamente
+      generateNumeroPedido();
     });
 
     return {
@@ -177,7 +205,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos adicionais para o componente */
 .form-group {
   margin-bottom: 1rem;
 }

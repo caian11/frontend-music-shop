@@ -91,7 +91,6 @@ export default {
     const route = useRoute();
     const produtoId = route.params.id;
 
-    // Função para pegar o produto por ID
     const fetchProduto = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -111,25 +110,21 @@ export default {
       }
     };
 
-    // Função para atualizar o produto
     const updateProduto = async () => {
       try {
         const token = localStorage.getItem("token");
 
-        // Converte o valor para ponto, se houver vírgula
-        const valorConvertido = produto.value.valor.replace(',', '.');
+        const valorConvertido = produto.value.valor.replace(",", ".");
 
-        // Criação de um novo objeto para enviar ao backend
         const produtoData = {
           nome: produto.value.nome,
           marca: produto.value.marca,
-          valor: parseFloat(valorConvertido),  // Converte para número
+          valor: parseFloat(valorConvertido),
           quantidadeEstoque: produto.value.quantidadeEstoque,
           descricao: produto.value.descricao,
           status: produto.value.status,
         };
 
-        // Enviar a requisição PATCH com o valor correto
         await axios.patch(
           `http://localhost:3000/produto/${produtoId}`,
           produtoData,
@@ -137,7 +132,7 @@ export default {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         alert("Produto atualizado com sucesso!");
         window.location.reload();
@@ -147,7 +142,6 @@ export default {
       }
     };
 
-    // Chama a função quando o componente for montado
     onMounted(() => {
       fetchProduto();
     });
@@ -159,10 +153,6 @@ export default {
     };
   },
 };
-
-
 </script>
 
-<style scoped>
-/* Adicione os estilos necessários aqui */
-</style>
+<style scoped></style>
